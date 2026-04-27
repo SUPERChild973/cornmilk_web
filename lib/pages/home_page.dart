@@ -9,10 +9,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-
   int selectedIndex = 0;
 
   final Color primaryColor = const Color(0xFF6C63FF);
+  final Color textColor = const Color(0xFF222222);
 
   final List<Widget> pages = [
     HomeContent(),
@@ -32,98 +32,161 @@ class _HomePageState extends State<HomePage>
       duration: const Duration(milliseconds: 300),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.9, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
   }
 
-  void openDrawer() {
-    _controller.forward();
-    Scaffold.of(context).openDrawer();
+  void closeDrawer() {
+    _controller.reverse();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // ================= APPBAR =================
-      appBar: AppBar(
-        backgroundColor: primaryColor,
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/images/logo.png',
-              height: 35,
-            ),
-            const SizedBox(width: 10),
-            const Text("CornMilk"),
-          ],
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primaryColor: primaryColor,
+        textTheme: TextTheme(
+          bodyMedium: TextStyle(color: textColor),
+          titleLarge:
+              TextStyle(color: textColor, fontWeight: FontWeight.bold),
         ),
       ),
-
-      // ================= DRAWER =================
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            UserAccountsDrawerHeader(
-              decoration: BoxDecoration(color: primaryColor),
-              currentAccountPicture: CircleAvatar(
-                backgroundImage:
-                    AssetImage('assets/images/profile.jpg'), // FOTO PROFIL
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: primaryColor,
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                _controller.forward();
+                Scaffold.of(context).openDrawer();
+              },
+            ),
+          ),
+          title: Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundImage: AssetImage('assets/logoCornMilk.png'),
+                backgroundColor: Colors.white,
               ),
-              accountName: const Text("Nama Kamu"),
-              accountEmail: const Text("email@contoh.com"),
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text("Home"),
-              onTap: () {
-                setState(() => selectedIndex = 0);
-                Navigator.pop(context);
-              },
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.shopping_cart),
-              title: const Text("Produk"),
-              onTap: () {
-                setState(() => selectedIndex = 1);
-                Navigator.pop(context);
-              },
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.contact_mail),
-              title: const Text("Kontak"),
-              onTap: () {
-                setState(() => selectedIndex = 2);
-                Navigator.pop(context);
-              },
-            ),
-          ],
+              const SizedBox(width: 10),
+              const Text("CornMilk"),
+            ],
+          ),
         ),
-      ),
-
-      // ================= BODY + ANIMASI =================
-      body: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: pages[selectedIndex],
-          );
-        },
+        drawer: Drawer(
+          child: ListView(
+            children: [
+              UserAccountsDrawerHeader(
+                decoration: BoxDecoration(color: primaryColor),
+                currentAccountPicture: const CircleAvatar(
+                  backgroundImage: AssetImage('assets/logoCornMilk.png'),
+                ),
+                accountName: const Text("CornMilk"),
+                accountEmail: const Text("info@cornmilk.com"),
+              ),
+              ListTile(
+                leading: const Icon(Icons.home),
+                title: const Text("Home"),
+                onTap: () {
+                  setState(() => selectedIndex = 0);
+                  closeDrawer();
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.shopping_cart),
+                title: const Text("Produk"),
+                onTap: () {
+                  setState(() => selectedIndex = 1);
+                  closeDrawer();
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.contact_mail),
+                title: const Text("Kontak"),
+                onTap: () {
+                  setState(() => selectedIndex = 2);
+                  closeDrawer();
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        ),
+        body: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Transform.scale(
+              scale: _scaleAnimation.value,
+              child: pages[selectedIndex],
+            );
+          },
+        ),
       ),
     );
   }
 }
 
 ////////////////////////////////////////////////////////////
-/// HOME CONTENT
+/// HOME CONTENT (WITH BOUNCE BUTTON)
 ////////////////////////////////////////////////////////////
 
-class HomeContent extends StatelessWidget {
+class HomeContent extends StatefulWidget {
+  @override
+  _HomeContentState createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent>
+    with SingleTickerProviderStateMixin {
   final Color primaryColor = const Color(0xFF6C63FF);
+
+  late AnimationController _btnController;
+
+  final List<Map<String, String>> produk = [
+    {"nama": "Original", "img": "assets/jagung.jpeg"},
+    {"nama": "Coklat", "img": "assets/coklat.jpeg"},
+    {"nama": "Matcha", "img": "assets/matcha.jpeg"},
+    {"nama": "Strawberry", "img": "assets/strawberry.jpeg"},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _btnController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 120),
+    );
+  }
+
+  @override
+  void dispose() {
+    _btnController.dispose();
+    super.dispose();
+  }
+
+  void _onTapDown(TapDownDetails details) {
+    _btnController.forward();
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    _btnController.reverse();
+  }
+
+  void _onTapCancel() {
+    _btnController.reverse();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,15 +194,13 @@ class HomeContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
-          // ================= HERO =================
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(30),
             color: primaryColor,
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   "Minuman Sehat & Kekinian 🍹",
                   style: TextStyle(
@@ -150,75 +211,88 @@ class HomeContent extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  "Susu jagung segar dengan berbagai varian rasa!",
+                  "Fresh Taste, Happy Vibes Only!",
                   style: TextStyle(color: Colors.white70),
                 ),
               ],
             ),
           ),
-
-          const SizedBox(height: 20),
-
-          // ================= BANNER =================
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Image.asset(
-                'assets/images/banner.jpg',
-                height: 180,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-
           const SizedBox(height: 30),
-
-          // ================= PRODUK =================
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Text(
               "Produk Unggulan",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
-
-          const SizedBox(height: 15),
-
+          const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                productCard("Original", "assets/images/produk1.png"),
-                const SizedBox(width: 10),
-                productCard("Coklat", "assets/images/produk2.png"),
-              ],
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: produk.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 15,
+                mainAxisSpacing: 15,
+                childAspectRatio: 0.75,
+              ),
+              itemBuilder: (context, index) {
+                return productCard(
+                  produk[index]["nama"]!,
+                  produk[index]["img"]!,
+                );
+              },
             ),
           ),
+          const SizedBox(height: 40),
 
-          const SizedBox(height: 30),
-
-          // ================= CTA =================
+          // 🔥 BOUNCE BUTTON
           Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 30, vertical: 15),
-              ),
-              onPressed: () {
+            child: GestureDetector(
+              onTapDown: _onTapDown,
+              onTapUp: _onTapUp,
+              onTapCancel: _onTapCancel,
+              onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Fitur pemesanan coming soon")),
                 );
               },
-              child: const Text("Pesan Sekarang"),
+              child: AnimatedBuilder(
+                animation: _btnController,
+                builder: (context, child) {
+                  return Transform.scale(
+                    scale: 1 - (_btnController.value * 0.1),
+                    child: child,
+                  );
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      )
+                    ],
+                  ),
+                  child: const Text(
+                    "Pesan Sekarang",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
-
           const SizedBox(height: 40),
         ],
       ),
@@ -226,32 +300,35 @@ class HomeContent extends StatelessWidget {
   }
 
   static Widget productCard(String nama, String img) {
-    return Expanded(
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        elevation: 4,
-        child: Column(
-          children: [
-            ClipRRect(
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      elevation: 6,
+      child: Column(
+        children: [
+          Expanded(
+            child: ClipRRect(
               borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(15)),
+                  const BorderRadius.vertical(top: Radius.circular(20)),
               child: Image.asset(
                 img,
-                height: 120,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(height: 10),
-            Text(
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Text(
               nama,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const SizedBox(height: 10),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
