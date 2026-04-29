@@ -9,8 +9,8 @@ class KontakPage extends StatelessWidget {
         children: [
           Text("Kontak Kami"),
           SizedBox(height: 10),
-          Text("Email: brand@email.com"),
-          Text("Instagram: @brandkamu"),
+          Text("Email: CornMilk@email.com"),
+          Text("Instagram: @CornMilk"),
         ],
       ),
     );

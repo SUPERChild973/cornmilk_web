@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 class ProdukPage extends StatelessWidget {
 
   final List<Map<String, String>> produk = [
-    {"nama": "Produk 1", "img": "https://via.placeholder.com/150"},
-    {"nama": "Produk 2", "img": "https://via.placeholder.com/150"},
+    {"nama": "Original", "img": "assets/jagung.jpeg"},
+    {"nama": "Coklat", "img": "assets/coklat.jpeg"},
+    {"nama": "Matcha", "img": "assets/matcha.jpeg"},
+    {"nama": "Strawberry", "img": "assets/strawberry.jpeg"},
   ];
 
   @override
