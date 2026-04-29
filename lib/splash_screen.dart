@@ -35,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 20),
             const Text(
-              "Brand Kamu",
+              "CornMilk",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 26,
@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 10),
             const Text(
-              "Slogan kamu di sini",
+              "Fresh Taste, Happy Vibes Only",
               style: TextStyle(color: Colors.white70),
             ),
           ],

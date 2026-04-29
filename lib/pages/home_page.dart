@@ -138,10 +138,6 @@ class _HomePageState extends State<HomePage>
   }
 }
 
-////////////////////////////////////////////////////////////
-/// HOME CONTENT (WITH BOUNCE BUTTON)
-////////////////////////////////////////////////////////////
-
 class HomeContent extends StatefulWidget {
   @override
   _HomeContentState createState() => _HomeContentState();
@@ -248,7 +244,6 @@ class _HomeContentState extends State<HomeContent>
           ),
           const SizedBox(height: 40),
 
-          // 🔥 BOUNCE BUTTON
           Center(
             child: GestureDetector(
               onTapDown: _onTapDown,
