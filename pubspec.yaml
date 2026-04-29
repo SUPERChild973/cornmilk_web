@@ -58,11 +58,11 @@ flutter:
   uses-material-design: true
 
   assets:
-    - Image.asset('assets/strawberry.jpeg')
-    - Image.asset('assets/matcha.jpeg')
-    - Image.asset('assets/logoCornMilk.png')
-    - Image.asset('assets/jagung.jpeg')
-    - Image.asset('assets/coklat.jpeg')
+    - assets/strawberry.jpeg
+    - assets/matcha.jpeg
+    - assets/logoCornMilk.png
+    - assets/jagung.jpeg
+    - assets/coklat.jpeg
 
   # To add assets to your application, add an assets section, like this:
   # assets:
